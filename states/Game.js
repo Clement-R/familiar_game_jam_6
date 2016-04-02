@@ -32,6 +32,9 @@ BasicGame.Game.prototype = {
         this.BOARD_WIDTH = 16;
         this.BOARD_HEIGHT = 12;
 
+        this.enemies = [];
+
+        // Setup board and start-exit tiles
         this.board = [];
 
         this.level = [
@@ -49,7 +52,29 @@ BasicGame.Game.prototype = {
             [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0]
         ];
 
+        this.start = {x: 1, y: 0};
+        this.exit = {x: 13, y: 11}
+
+        // Setup pathfinding
+        var easystar = new EasyStar.js();
+        easystar.setGrid(this.level);
+        easystar.setAcceptableTiles([1]);
+        easystar.findPath(this.start.x,
+                          this.start.y,
+                          this.exit.x,
+                          this.exit.y,
+                          function( path ) {
+                              if (path === null) {
+                                  console.log("Path was not found.");
+                              } else {
+                                  console.log("Path was found. The first Point is " + path[0].x + " " + path[0].y);
+                              }
+                          }.bind(this));
+        easystar.calculate();
+
+        // Spawn things
         this.showLevel();
+        this.spawnEnemy();
     },
 
     update: function () {
@@ -79,6 +104,15 @@ BasicGame.Game.prototype = {
                 this.board[i][j] = this.level[i][j];
             }
         }
+    },
+
+    spawnEnemy: function() {
+        this.enemies.push(new Enemy(this,
+                                    'enemy_01',
+                                    this.start.x * this.TILE_SIZE,
+                                    this.start.y * this.TILE_SIZE,
+                                    1)
+        );
     },
 
     quitGame: function (pointer) {
