@@ -28,13 +28,57 @@ BasicGame.Game = function (game) {
 BasicGame.Game.prototype = {
 
     create: function () {
+        this.TILE_SIZE = 40;
+        this.BOARD_WIDTH = 16;
+        this.BOARD_HEIGHT = 12;
 
-        //  Honestly, just about anything could go here. It's YOUR game after all. Eat your heart out!
+        this.board = [];
+
+        this.level = [
+            [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+            [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+            [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0]
+        ];
+
+        this.showLevel();
     },
 
     update: function () {
+    },
 
-        //  Honestly, just about anything could go here. It's YOUR game after all. Eat your heart out!
+    showLevel: function () {
+        for (var i = 0; i < this.BOARD_HEIGHT; i++) {
+
+            this.board[i] = [];
+
+            for (var j = 0; j < this.BOARD_WIDTH; j++) {
+                // y : x
+                switch(this.level[i][j]) {
+                    case 0:
+                        this.board[i][j] = this.add.sprite(j * this.TILE_SIZE,
+                                                           i * this.TILE_SIZE,
+                                                           'ground_tile');
+                    break;
+
+                    case 1:
+                        this.board[i][j] = this.add.sprite(j * this.TILE_SIZE,
+                                                           i * this.TILE_SIZE,
+                                                           'path_tile');
+                    break;
+                }
+
+                this.board[i][j] = this.level[i][j];
+            }
+        }
     },
 
     quitGame: function (pointer) {

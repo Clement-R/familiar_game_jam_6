@@ -24,10 +24,14 @@ BasicGame.Preloader.prototype = {
 
 		//	Here we load the rest of the assets our game needs.
 		//	As this is just a Project Template I've not provided these assets, swap them for your own.
-		/*this.load.image('titlepage', 'images/title.jpg');
+		this.load.image('ground_tile', '../ground_tile.png');
+		this.load.image('path_tile', '../path_tile.png');
+		this.load.image('enemy_01', '../enemy_01-sheet.png');
+		/*
 		this.load.atlas('playButton', 'images/play_button.png', 'images/play_button.json');
 		this.load.audio('titleMusic', ['audio/main_menu.mp3']);
-		this.load.bitmapFont('caslon', 'fonts/caslon.png', 'fonts/caslon.xml');*/
+		this.load.bitmapFont('caslon', 'fonts/caslon.png', 'fonts/caslon.xml');
+		*/
 		//	+ lots of other required assets here
 
 	},
