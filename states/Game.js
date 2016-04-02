@@ -65,6 +65,10 @@ BasicGame.Game.prototype = {
                           this.setPath.bind(this));
         easystar.calculate();
 
+        // Set tower variables
+        this.towers = [];
+        this.chosenTower = "tower_01";
+
         // Create enemy tracker
         this.enemies = [];
 
@@ -101,6 +105,20 @@ BasicGame.Game.prototype = {
 
         //  Then let's go back to the main menu.
         this.state.start('MainMenu');
-    }
+    },
 
+    addTower: function () {
+        if(this.chosenTower !== null) {
+            mousePos = this.board.worldToBoard(this.input.mousePointer.x,
+                                               this.input.mousePointer.y)
+            spritePos = this.board.boardToWorld(mousePos.x, mousePos.y);
+            this.towers.push(this.add.sprite(spritePos.x,
+                                             spritePos.y,
+                                             this.chosenTower
+                                            )
+            );
+        } else {
+            console.log("No tower chosen");
+        }
+    },
 };

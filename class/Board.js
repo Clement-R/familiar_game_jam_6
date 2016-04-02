@@ -24,8 +24,8 @@ Board.prototype.createLevel = function(first_argument) {
                                                        		i * this.TILE_SIZE,
                                                        		'ground_tile');
                     this.board[i][j].inputEnabled = true;
-                    this.board[i][j].events.onInputDown.add(this.onClick,
-                                                            this);
+                    this.board[i][j].events.onInputDown.add(this.game.addTower,
+                                                            this.game);
                     this.board[i][j].buildable = true;
                 break;
 
@@ -39,6 +39,14 @@ Board.prototype.createLevel = function(first_argument) {
     }
 };
 
-Board.prototype.onClick = function(first_argument) {
-	console.log('Click LOL');
+Board.prototype.worldToBoard = function(x, y) {
+	return {x: Math.floor(x / this.TILE_SIZE),
+			y: Math.floor(y / this.TILE_SIZE)
+	};
+};
+
+Board.prototype.boardToWorld = function(x, y) {
+	return {x: x * this.TILE_SIZE,
+			y: y * this.TILE_SIZE
+	};
 };

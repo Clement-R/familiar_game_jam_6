@@ -27,6 +27,7 @@ BasicGame.Preloader.prototype = {
 		this.load.image('ground_tile', '../graphics/ground_tile.png');
 		this.load.image('path_tile', '../graphics/path_tile.png');
 		this.load.image('enemy_01', '../graphics/enemy_01-sheet.png');
+		this.load.image('tower_01', '../graphics/tower_01.png');
 		/*
 		this.load.atlas('playButton', 'images/play_button.png', 'images/play_button.json');
 		this.load.audio('titleMusic', ['audio/main_menu.mp3']);
