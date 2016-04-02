@@ -72,12 +72,13 @@ BasicGame.Game.prototype = {
         easystar.calculate();
 
         // Set tower variables
-        this.towers = [];
+        this.towers = this.add.group();
         this.buildableTowers = {
             tower_01: {
                 name: "Simple tower",
                 key: "tower_01",
                 price: 150,
+                range: 150,
             },
         };
         this.chosenTower = this.buildableTowers['tower_01'];

@@ -11,6 +11,8 @@ Board = function (game, level) {
     this.game = game;
 
     this.createLevel();
+
+    this.rangeCircle = this.game.add.graphics(0, 0);
 };
 
 Board.prototype.createLevel = function(first_argument) {
@@ -34,6 +36,9 @@ Board.prototype.createLevel = function(first_argument) {
                     this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE,
                                                        		i * this.TILE_SIZE,
                                                        		'path_tile');
+                    this.board[i][j].inputEnabled = true;
+                    this.board[i][j].events.onInputDown.add(this.clearSelection,
+                                                            this);
                 break;
             }
         }
@@ -42,14 +47,12 @@ Board.prototype.createLevel = function(first_argument) {
 
 Board.prototype.worldToBoard = function(x, y) {
 	return {x: Math.floor(x / this.TILE_SIZE),
-			y: Math.floor(y / this.TILE_SIZE)
-	};
+			y: Math.floor(y / this.TILE_SIZE)};
 };
 
 Board.prototype.boardToWorld = function(x, y) {
 	return {x: x * this.TILE_SIZE,
-			y: y * this.TILE_SIZE
-	};
+			y: y * this.TILE_SIZE};
 };
 
 Board.prototype.addTower = function () {
@@ -59,13 +62,13 @@ Board.prototype.addTower = function () {
 
         if(this.isTileEmpty(mousePos.x, mousePos.y)) {
         	var spritePos = this.boardToWorld(mousePos.x, mousePos.y);
-        	this.logicalBoard[mousePos.y][mousePos.x] = 2;
 
 	        if(this.game.checkMoney()) {
+        		this.logicalBoard[mousePos.y][mousePos.x] = 2;
 	            this.game.purchaseTower();
-	            this.game.towers.push(this.game.add.sprite(spritePos.x,
-	                                                  	   spritePos.y,
-	                                                  	   this.game.chosenTower.key)
+	            this.game.towers.add(this.game.add.sprite(spritePos.x,
+	                                                  	  spritePos.y,
+	                                                  	  this.game.chosenTower.key)
 	            );
 	        } else {
 	            // Not enough money to build selected tower
@@ -77,12 +80,37 @@ Board.prototype.addTower = function () {
 };
 
 Board.prototype.isTileEmpty = function(x, y) {
+	this.clearSelection();
+
 	if(this.logicalBoard[y][x] == 0) {
 		return true;
-	} else if (this.logicalBoard[y][x] == 2) {
+	} else if (this.logicalBoard[y][x] === 2) {
 		// Select tower for upgrade
+		// TODO
+
+		// Draw range
+		this.showRange(x, y);
+
 		return false;
 	} else {
 		return false;
 	}
+};
+
+Board.prototype.clearSelection = function() {
+	this.rangeCircle.clear();
+};
+
+Board.prototype.showRange = function(x, y) {
+	var spritePos = this.boardToWorld(x, y);
+
+	this.rangeCircle.x = spritePos.x;
+	this.rangeCircle.y = spritePos.y;
+
+    this.rangeCircle.lineStyle(0);
+    this.rangeCircle.beginFill(0xFFFFFF, 0.5);
+    this.rangeCircle.drawCircle(this.TILE_SIZE / 2,
+    							this.TILE_SIZE / 2,
+    							this.game.chosenTower.range);
+    this.rangeCircle.endFill();
 };
