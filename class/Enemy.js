@@ -27,8 +27,8 @@ Enemy.prototype.move = function() {
 		this.nextPathIndex ++;
 		this.nextPosition = this.path[this.nextPathIndex]
 
-		var x = this.nextPosition.x * this.game.TILE_SIZE;
-		var y = this.nextPosition.y * this.game.TILE_SIZE;
+		var x = this.nextPosition.x * this.game.board.TILE_SIZE;
+		var y = this.nextPosition.y * this.game.board.TILE_SIZE;
 
 		this.tween = this.game.add.tween(this);
 		this.tween.to({x: x, y: y},

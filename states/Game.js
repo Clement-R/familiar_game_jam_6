@@ -28,17 +28,10 @@ BasicGame.Game = function (game) {
 BasicGame.Game.prototype = {
 
     create: function () {
-        // Set constants
-        this.TILE_SIZE = 40;
-        this.BOARD_WIDTH = 16;
-        this.BOARD_HEIGHT = 12;
-
         // Start physic system
         this.physics.startSystem(Phaser.Physics.ARCADE);
 
-
         // Setup board and start-exit tiles
-        this.board = [];
         this.level = [
             [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -57,6 +50,8 @@ BasicGame.Game.prototype = {
         this.start = {x: 1, y: 0};
         this.exit = {x: 13, y: 11}
 
+        this.board = new Board(this, this.level);
+
         // Setup pathfinding
         this.path = null;
         var easystar = new EasyStar.js();
@@ -74,7 +69,6 @@ BasicGame.Game.prototype = {
         this.enemies = [];
 
         // Spawn things
-        this.showLevel();
         this.spawnEnemy();
     },
 
@@ -89,37 +83,11 @@ BasicGame.Game.prototype = {
     update: function () {
     },
 
-    showLevel: function () {
-        for (var i = 0; i < this.BOARD_HEIGHT; i++) {
-
-            this.board[i] = [];
-
-            for (var j = 0; j < this.BOARD_WIDTH; j++) {
-                // y : x
-                switch(this.level[i][j]) {
-                    case 0:
-                        this.board[i][j] = this.add.sprite(j * this.TILE_SIZE,
-                                                           i * this.TILE_SIZE,
-                                                           'ground_tile');
-                    break;
-
-                    case 1:
-                        this.board[i][j] = this.add.sprite(j * this.TILE_SIZE,
-                                                           i * this.TILE_SIZE,
-                                                           'path_tile');
-                    break;
-                }
-
-                this.board[i][j] = this.level[i][j];
-            }
-        }
-    },
-
     spawnEnemy: function() {
         var enemy = new Enemy(this,
                               'enemy_01',
-                              this.start.x * this.TILE_SIZE,
-                              this.start.y * this.TILE_SIZE,
+                              this.start.x * this.board.TILE_SIZE,
+                              this.start.y * this.board.TILE_SIZE,
                               1,
                               this.path);
         this.physics.arcade.enable(enemy);
