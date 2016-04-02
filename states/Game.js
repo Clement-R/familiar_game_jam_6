@@ -28,6 +28,9 @@ BasicGame.Game = function (game) {
 BasicGame.Game.prototype = {
 
     create: function () {
+        // Set stage color
+        this.stage.backgroundColor = "#bdc3c7"
+
         // Start physic system
         this.physics.startSystem(Phaser.Physics.ARCADE);
 
