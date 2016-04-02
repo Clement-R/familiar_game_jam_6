@@ -1,10 +1,11 @@
-Enemy = function (game, key, x, y, health, path) {
+Enemy = function (game, key, x, y, health, path, moneyValue) {
     Phaser.Sprite.call(this, game, x, y, key);
 
     this.game = game;
 
     this.speed = 250;
     this.health = health;
+    this.moneyValue = moneyValue;
 
     this.path = path;
     this.nextPathIndex = 0;

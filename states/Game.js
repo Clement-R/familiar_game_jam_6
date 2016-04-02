@@ -31,6 +31,9 @@ BasicGame.Game.prototype = {
         // Set stage color
         this.stage.backgroundColor = "#bdc3c7"
 
+        // Set game variables
+        this.money = 500;
+
         // Start physic system
         this.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -70,13 +73,28 @@ BasicGame.Game.prototype = {
 
         // Set tower variables
         this.towers = [];
-        this.chosenTower = "tower_01";
+        this.buildableTowers = {
+            tower_01: {
+                name: "Simple tower",
+                key: "tower_01",
+                price: 150,
+            },
+        };
+        this.chosenTower = this.buildableTowers['tower_01'];
 
         // Create enemy tracker
         this.enemies = [];
 
         // Spawn things
         this.spawnEnemy();
+
+        // Show UI
+        this.moneyText = "Money : ";
+        var style = { font: "25px Arial", fill: "#ff0044"};
+        this.moneyUIText = this.add.text(0,
+                                        500,
+                                        this.moneyText + this.money,
+                                        style);
     },
 
     setPath: function(path) {
@@ -96,7 +114,8 @@ BasicGame.Game.prototype = {
                               this.start.x * this.board.TILE_SIZE,
                               this.start.y * this.board.TILE_SIZE,
                               1,
-                              this.path);
+                              this.path,
+                              50);
         this.physics.arcade.enable(enemy);
         this.enemies.push(enemy);
     },
@@ -110,18 +129,39 @@ BasicGame.Game.prototype = {
         this.state.start('MainMenu');
     },
 
+    updateUI: function() {
+        this.moneyUIText.text = this.moneyText + this.money;
+    },
+
     addTower: function () {
         if(this.chosenTower !== null) {
             mousePos = this.board.worldToBoard(this.input.mousePointer.x,
                                                this.input.mousePointer.y)
             spritePos = this.board.boardToWorld(mousePos.x, mousePos.y);
-            this.towers.push(this.add.sprite(spritePos.x,
-                                             spritePos.y,
-                                             this.chosenTower
-                                            )
-            );
+
+            if(this.checkMoney()) {
+                this.purchaseTower();
+                this.towers.push(this.add.sprite(spritePos.x,
+                                                 spritePos.y,
+                                                 this.chosenTower.key));
+            } else {
+                // Not enough money to build selected tower
+            }
         } else {
             console.log("No tower chosen");
         }
+    },
+
+    checkMoney: function() {
+        if(this.money - this.chosenTower.price > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    purchaseTower: function() {
+        this.money -= this.chosenTower.price;
+        this.updateUI();
     },
 };
