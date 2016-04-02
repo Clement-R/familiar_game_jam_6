@@ -28,15 +28,17 @@ BasicGame.Game = function (game) {
 BasicGame.Game.prototype = {
 
     create: function () {
+        // Set constants
         this.TILE_SIZE = 40;
         this.BOARD_WIDTH = 16;
         this.BOARD_HEIGHT = 12;
 
-        this.enemies = [];
+        // Start physic system
+        this.physics.startSystem(Phaser.Physics.ARCADE);
+
 
         // Setup board and start-exit tiles
         this.board = [];
-
         this.level = [
             [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -56,25 +58,32 @@ BasicGame.Game.prototype = {
         this.exit = {x: 13, y: 11}
 
         // Setup pathfinding
+        this.path = null;
         var easystar = new EasyStar.js();
         easystar.setGrid(this.level);
         easystar.setAcceptableTiles([1]);
+        easystar.enableSync();
         easystar.findPath(this.start.x,
                           this.start.y,
                           this.exit.x,
                           this.exit.y,
-                          function( path ) {
-                              if (path === null) {
-                                  console.log("Path was not found.");
-                              } else {
-                                  console.log("Path was found. The first Point is " + path[0].x + " " + path[0].y);
-                              }
-                          }.bind(this));
+                          this.setPath.bind(this));
         easystar.calculate();
+
+        // Create enemy tracker
+        this.enemies = [];
 
         // Spawn things
         this.showLevel();
         this.spawnEnemy();
+    },
+
+    setPath: function(path) {
+        if (path === null) {
+            console.log("Path was not found.");
+        } else {
+            this.path = path;
+        }
     },
 
     update: function () {
@@ -107,12 +116,14 @@ BasicGame.Game.prototype = {
     },
 
     spawnEnemy: function() {
-        this.enemies.push(new Enemy(this,
-                                    'enemy_01',
-                                    this.start.x * this.TILE_SIZE,
-                                    this.start.y * this.TILE_SIZE,
-                                    1)
-        );
+        var enemy = new Enemy(this,
+                              'enemy_01',
+                              this.start.x * this.TILE_SIZE,
+                              this.start.y * this.TILE_SIZE,
+                              1,
+                              this.path);
+        this.physics.arcade.enable(enemy);
+        this.enemies.push(enemy);
     },
 
     quitGame: function (pointer) {
