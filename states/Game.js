@@ -133,25 +133,6 @@ BasicGame.Game.prototype = {
         this.moneyUIText.text = this.moneyText + this.money;
     },
 
-    addTower: function () {
-        if(this.chosenTower !== null) {
-            mousePos = this.board.worldToBoard(this.input.mousePointer.x,
-                                               this.input.mousePointer.y)
-            spritePos = this.board.boardToWorld(mousePos.x, mousePos.y);
-
-            if(this.checkMoney()) {
-                this.purchaseTower();
-                this.towers.push(this.add.sprite(spritePos.x,
-                                                 spritePos.y,
-                                                 this.chosenTower.key));
-            } else {
-                // Not enough money to build selected tower
-            }
-        } else {
-            console.log("No tower chosen");
-        }
-    },
-
     checkMoney: function() {
         if(this.money - this.chosenTower.price > 0) {
             return true;
