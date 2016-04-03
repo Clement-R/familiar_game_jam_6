@@ -34,7 +34,8 @@ BasicGame.Preloader.prototype = {
 
 	update: function () {
 		// Decode MP3 files
-		if (this.cache.isSoundDecoded('mainMenuMusic')) {
+		if (this.cache.isSoundDecoded('mainMenuMusic') &&
+			this.cache.isSoundDecoded('mainTheme')) {
 			this.state.start('MainMenu');
 		}
 	}

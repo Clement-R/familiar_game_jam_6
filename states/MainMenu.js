@@ -27,7 +27,7 @@ BasicGame.MainMenu.prototype = {
                                     "Click START to launch the first wave while in game",
                                     style);
 
-		this.music = this.add.audio('mainMenuMusic');
+		this.music = this.add.audio('mainMenuMusic', 0.65);
 		this.music.play();
 	},
 

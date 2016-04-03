@@ -29,8 +29,8 @@ BasicGame.Game.prototype = {
 
     create: function () {
         // Set music and start it
-        this.music = this.add.audio('mainTheme', 0.65, true);
-        // this.music.play();
+        this.music = this.add.audio('mainTheme', 0.35, true);
+        this.music.play();
 
         // Set stage color
         this.stage.backgroundColor = "#bdc3c7"
@@ -58,19 +58,19 @@ BasicGame.Game.prototype = {
                 1: [
                     {
                         enemyType: 'enemy_01',
-                        number: 5
+                        number: 4
                     },
                 ],
                 2: [
                     {
                         enemyType: 'enemy_01',
-                        number: 3
+                        number: 5
                     }
                 ],
                 3: [
                     {
                         enemyType: 'enemy_01',
-                        number: 5
+                        number: 8
                     }
                 ],
             },
