@@ -24,7 +24,7 @@ Enemy.prototype.constructor = Enemy;
 
 Enemy.prototype.update = function() {
 	this.healthBar.x = this.x;
-	this.healthBar.y = this.y;
+	this.healthBar.y = this.y + 5;
 };
 
 Enemy.prototype.addHealthBar = function() {
@@ -50,8 +50,8 @@ Enemy.prototype.move = function() {
 		this.tween.onComplete.addOnce(this.move, this);
 		this.tween.start();
 	} else {
-		this.healthBar.destroy();
-		this.destroy();
+		this.game.loseLife();
+		this.deleteEnemy();
 	}
 };
 
@@ -64,14 +64,17 @@ Enemy.prototype.damage = function(amount) {
         }
 
         if (this.health <= 0) {
-
         	this.game.money += this.moneyValue;
         	this.game.updateUI();
 
-        	this.tween.stop();
-        	delete this.tween;
-        	this.healthBar.destroy();
-            this.destroy();
+        	this.deleteEnemy();
         }
     }
+};
+
+Enemy.prototype.deleteEnemy = function() {
+	this.tween.stop();
+	delete this.tween;
+	this.healthBar.destroy();
+    this.destroy();
 };

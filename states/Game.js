@@ -33,6 +33,7 @@ BasicGame.Game.prototype = {
 
         // Set game variables
         this.money = 500;
+        this.life = 5;
 
         // Start physic system
         this.physics.startSystem(Phaser.Physics.ARCADE);
@@ -92,14 +93,19 @@ BasicGame.Game.prototype = {
         this.spawnEnemy();
 
         // Show UI
+        this.style = { font: "25px Arial", fill: "#ff0044"};
         this.moneyText = "Money : ";
-        var style = { font: "25px Arial", fill: "#ff0044"};
         this.moneyUIText = this.add.text(0,
                                         500,
                                         this.moneyText + this.money,
-                                        style);
+                                        this.style);
+        this.lifeText = "Life : ";
+        this.lifeUIText = this.add.text(0,
+                                        550,
+                                        this.lifeText + this.life,
+                                        this.style);
 
-        var changeKey = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+        var changeKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         changeKey.onDown.add(function() {
             this.spawnEnemy();
         }, this);
@@ -175,6 +181,19 @@ BasicGame.Game.prototype = {
 
     updateUI: function() {
         this.moneyUIText.text = this.moneyText + this.money;
+        this.lifeUIText.text = this.lifeText + this.life;
+    },
+
+    loseLife: function() {
+        this.life --;
+        this.updateUI();
+
+        if(this.life == 0) {
+            console.log("PAUSE")
+            this.game.paused = true;
+
+            this.showGameOver();
+        }
     },
 
     checkMoney: function() {
@@ -189,4 +208,25 @@ BasicGame.Game.prototype = {
         this.money -= this.chosenTower.price;
         this.updateUI();
     },
+
+    showGameOver: function() {
+        var style = { font: "55px Arial", fill: "#ffffff"};
+        this.gameOverUIText = this.add.text(175,
+                                            40,
+                                            "Game over",
+                                            style);
+
+        var style2 = { font: "35px Arial", fill: "#ffffff"};
+        this.gameOverUIText = this.add.text(140,
+                                            120,
+                                            "Press ENTER to retry",
+                                            style2);
+
+        var changeKey = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+        changeKey.onDown.add(function() {
+            console.log("RETRY");
+            this.game.paused = false;
+            this.state.start('Game');
+        }, this);
+    }
 };
