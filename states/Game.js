@@ -79,6 +79,8 @@ BasicGame.Game.prototype = {
                 key: "tower_01",
                 price: 150,
                 range: 250,
+                damage: 1,
+                firerate: 500,
             },
         };
         this.chosenTower = this.buildableTowers['tower_01'];
@@ -96,6 +98,11 @@ BasicGame.Game.prototype = {
                                         500,
                                         this.moneyText + this.money,
                                         style);
+
+        var changeKey = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+        changeKey.onDown.add(function() {
+            this.spawnEnemy();
+        }, this);
     },
 
     setPath: function(path) {
@@ -112,6 +119,24 @@ BasicGame.Game.prototype = {
 
     checkTurretFocus: function() {
         this.towers.forEach(function(tower) {
+
+            if(tower.aimedEnemy !== null && typeof tower.aimedEnemy !== "undefined") {
+                tower.aimedEnemy = null;
+            }
+
+            if(tower.aimedEnemy !== null) {
+                var distance = Math.sqrt(Math.pow(((tower.aimedEnemy.x + (this.board.TILE_SIZE / 2)) - tower.x), 2) + Math.pow(((tower.aimedEnemy.y + (this.board.TILE_SIZE / 2)) - tower.y), 2));
+                if(distance <= (tower.range / 2)) {
+                    tower.rotation = this.physics.arcade.angleToXY(tower,
+                                                                   tower.aimedEnemy.x + (this.board.TILE_SIZE / 2),
+                                                                   tower.aimedEnemy.y + (this.board.TILE_SIZE / 2));
+                    tower.angle = tower.angle + 100;
+                    return;
+                } else {
+                    tower.aimedEnemy = null;
+                }
+            }
+
             this.enemies.forEach(function(enemy) {
                 var distance = Math.sqrt(Math.pow(((enemy.x + (this.board.TILE_SIZE / 2)) - tower.x), 2) + Math.pow(((enemy.y + (this.board.TILE_SIZE / 2)) - tower.y), 2));
 
@@ -120,8 +145,10 @@ BasicGame.Game.prototype = {
                                                                    enemy.x + (this.board.TILE_SIZE / 2),
                                                                    enemy.y + (this.board.TILE_SIZE / 2));
                     tower.angle = tower.angle + 100;
+                    tower.aimedEnemy = enemy;
                 }
             }.bind(this));
+
         }.bind(this));
     },
 
@@ -130,7 +157,7 @@ BasicGame.Game.prototype = {
                               'enemy_01',
                               this.start.x * this.board.TILE_SIZE,
                               this.start.y * this.board.TILE_SIZE,
-                              1,
+                              5,
                               this.path,
                               50);
         this.physics.arcade.enable(enemy);

@@ -59,11 +59,13 @@ Enemy.prototype.damage = function(amount) {
 	if (this.alive) {
         this.health -= amount;
 
-        if(this.healthBar.scale.x >= 0 && (healthBar.scale.x - 0.00001) >= 0) {
-            healthBar.scale.x -= (1 / this.maxHealth);
+        if(this.healthBar.scale.x >= 0 && (this.healthBar.scale.x - 0.00001) >= 0) {
+            this.healthBar.scale.x -= (1 / this.maxHealth);
         }
 
         if (this.health <= 0) {
+        	this.tween.stop();
+        	delete this.tween;
         	this.healthBar.destroy();
             this.destroy();
         }

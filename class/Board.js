@@ -68,18 +68,31 @@ Board.prototype.addTower = function () {
 	            this.game.purchaseTower();
 
 	            // Create tower, need to move this in separate class
+
 	            var tower = this.game.add.sprite(spritePos.x + (this.TILE_SIZE / 2),
 	                                 			 spritePos.y + (this.TILE_SIZE / 2),
 	                                 			 this.game.chosenTower.key);
 	            tower.anchor.set(0.5, 0.5);
 	            tower.pivot.set(0.5, 0.5);
 
+	            tower.aimedEnemy = null;
 	            tower.price = this.game.chosenTower.price;
 	            tower.range = this.game.chosenTower.range;
+	            tower.damageAmount = this.game.chosenTower.damage;
+	            tower.firerate = this.game.chosenTower.firerate;
+	            tower.game = this.game;
+	            tower.nextFire = 0;
 
-	            tower.fireAtEnemy = function() {
+	            tower.update = function() {
+	            	if(this.aimedEnemy !== null) {
+	            		if (this.game.time.time < this.nextFire) { return; }
 
+					    this.aimedEnemy.damage(this.damageAmount);
+
+					    this.nextFire = this.game.time.time + this.firerate;
+	            	}
 	            };
+
 	            /* ******************************************************** */
 	            this.game.towers.add(tower);
 
