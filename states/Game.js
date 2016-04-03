@@ -178,7 +178,7 @@ BasicGame.Game.prototype = {
     },
 
     checkMoney: function() {
-        if(this.money - this.chosenTower.price > 0) {
+        if(this.money - this.chosenTower.price >= 0) {
             return true;
         } else {
             return false;

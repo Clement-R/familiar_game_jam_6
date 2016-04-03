@@ -64,6 +64,10 @@ Enemy.prototype.damage = function(amount) {
         }
 
         if (this.health <= 0) {
+
+        	this.game.money += this.moneyValue;
+        	this.game.updateUI();
+
         	this.tween.stop();
         	delete this.tween;
         	this.healthBar.destroy();
