@@ -66,10 +66,23 @@ Board.prototype.addTower = function () {
 	        if(this.game.checkMoney()) {
         		this.logicalBoard[mousePos.y][mousePos.x] = 2;
 	            this.game.purchaseTower();
-	            this.game.towers.add(this.game.add.sprite(spritePos.x,
-	                                                  	  spritePos.y,
-	                                                  	  this.game.chosenTower.key)
-	            );
+
+	            // Create tower, need to move this in separate class
+	            var tower = this.game.add.sprite(spritePos.x + (this.TILE_SIZE / 2),
+	                                 			 spritePos.y + (this.TILE_SIZE / 2),
+	                                 			 this.game.chosenTower.key);
+	            tower.anchor.set(0.5, 0.5);
+	            tower.pivot.set(0.5, 0.5);
+
+	            tower.price = this.game.chosenTower.price;
+	            tower.range = this.game.chosenTower.range;
+
+	            tower.fireAtEnemy = function() {
+
+	            };
+	            /* ******************************************************** */
+	            this.game.towers.add(tower);
+
 	        } else {
 	            // Not enough money to build selected tower
 	        }

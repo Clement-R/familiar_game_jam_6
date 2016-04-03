@@ -78,13 +78,13 @@ BasicGame.Game.prototype = {
                 name: "Simple tower",
                 key: "tower_01",
                 price: 150,
-                range: 150,
+                range: 250,
             },
         };
         this.chosenTower = this.buildableTowers['tower_01'];
 
         // Create enemy tracker
-        this.enemies = [];
+        this.enemies = this.add.group();
 
         // Spawn things
         this.spawnEnemy();
@@ -107,6 +107,22 @@ BasicGame.Game.prototype = {
     },
 
     update: function () {
+        this.checkTurretFocus();
+    },
+
+    checkTurretFocus: function() {
+        this.towers.forEach(function(tower) {
+            this.enemies.forEach(function(enemy) {
+                var distance = Math.sqrt(Math.pow(((enemy.x + (this.board.TILE_SIZE / 2)) - tower.x), 2) + Math.pow(((enemy.y + (this.board.TILE_SIZE / 2)) - tower.y), 2));
+
+                if(distance <= (tower.range / 2)) {
+                    tower.rotation = this.physics.arcade.angleToXY(tower,
+                                                                   enemy.x + (this.board.TILE_SIZE / 2),
+                                                                   enemy.y + (this.board.TILE_SIZE / 2));
+                    tower.angle = tower.angle + 100;
+                }
+            }.bind(this));
+        }.bind(this));
     },
 
     spawnEnemy: function() {
@@ -118,7 +134,7 @@ BasicGame.Game.prototype = {
                               this.path,
                               50);
         this.physics.arcade.enable(enemy);
-        this.enemies.push(enemy);
+        this.enemies.add(enemy);
     },
 
     quitGame: function (pointer) {
