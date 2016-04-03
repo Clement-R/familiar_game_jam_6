@@ -28,6 +28,10 @@ BasicGame.Game = function (game) {
 BasicGame.Game.prototype = {
 
     create: function () {
+        // Set music and start it
+        this.music = this.add.audio('mainTheme', 0.65, true);
+        // this.music.play();
+
         // Set stage color
         this.stage.backgroundColor = "#bdc3c7"
 
@@ -35,23 +39,57 @@ BasicGame.Game.prototype = {
         this.money = 500;
         this.life = 5;
 
+        this.lastWaveLaunched = false;
+
+        this.actualLevel = 1;
+        this.actualWave = 1;
+        this.delayBetweenLevel = 20000;
+        this.delayBetweenWave = 3500;
+        this.delayBetweenPop = 250;
+        this.nextWave = 0;
+        this.waveLevel = 1;
+
         // Start physic system
         this.physics.startSystem(Phaser.Physics.ARCADE);
 
+        // Waves data
+        this.waves = {
+            1: {
+                1: [
+                    {
+                        enemyType: 'enemy_01',
+                        number: 5
+                    },
+                ],
+                2: [
+                    {
+                        enemyType: 'enemy_01',
+                        number: 3
+                    }
+                ],
+                3: [
+                    {
+                        enemyType: 'enemy_01',
+                        number: 5
+                    }
+                ],
+            },
+        };
+
         // Setup board and start-exit tiles
         this.level = [
-            [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
-            [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-            [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0]
+            [2,1,3,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [2,1,3,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [2,1,9,4,4,4,4,4,4,4,4,4,4,4,0,0],
+            [2,1,1,1,1,1,1,1,1,1,1,1,1,1,3,0],
+            [0,5,5,5,5,5,5,5,5,5,5,5,7,1,3,0],
+            [0,4,4,4,4,4,4,4,4,4,4,4,6,1,3,0],
+            [2,1,1,1,1,1,1,1,1,1,1,1,1,1,3,0],
+            [2,1,8,5,5,5,5,5,5,5,5,5,5,5,0,0],
+            [2,1,9,4,4,4,4,4,4,4,4,4,4,4,0,0],
+            [2,1,1,1,1,1,1,1,1,1,1,1,1,1,3,0],
+            [0,5,5,5,5,5,5,5,5,5,5,5,7,1,3,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,2,1,3,0]
         ];
 
         this.start = {x: 1, y: 0};
@@ -89,25 +127,98 @@ BasicGame.Game.prototype = {
         // Create enemy tracker
         this.enemies = this.add.group();
 
-        // Spawn things
-        this.spawnEnemy();
-
         // Show UI
-        this.style = { font: "25px Arial", fill: "#ff0044"};
+        var style = { font: "25px Arial", fill: "#ff0044"};
         this.moneyText = "Money : ";
         this.moneyUIText = this.add.text(0,
                                         500,
                                         this.moneyText + this.money,
-                                        this.style);
+                                        style);
         this.lifeText = "Life : ";
         this.lifeUIText = this.add.text(0,
                                         550,
                                         this.lifeText + this.life,
-                                        this.style);
+                                        style);
 
+        var style = { font: "25px Arial", fill: "#ffffff"};
+        this.startUIText = this.add.text(200,
+                                         550,
+                                         "START",
+                                         style);
+        this.startUIText.inputEnabled = true;
+        this.startUIText.events.onInputDown.add(this.launchGame,
+                                                this);
+        /* DEBUG ONLY */
         var changeKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         changeKey.onDown.add(function() {
             this.spawnEnemy();
+        }, this);
+    },
+
+    launchGame: function () {
+        this.startUIText.text = "Next wave"
+        this.startUIText.events.onInputDown.removeAll();
+        this.launchWave();
+        this.startUIText.events.onInputDown.add(this.launchWave,
+                                                this);
+    },
+
+    hideNextLevelText: function() {
+        this.startUIText.events.onInputDown.removeAll();
+        this.startUIText.visible = false;
+
+        this.lastWaveLaunched = true;
+    },
+
+    launchWave: function () {
+        this.actualLevelData = this.waves[this.actualLevel];
+
+        this.waveData = this.actualLevelData[this.actualWave];
+
+        for (var i = 0; i < this.waveData.length; i++) {
+            var timerDelay = 0;
+
+            for (var j = 0; j < this.waveData[i]["number"]; j++) {
+                this.time.events.add(timerDelay, this.spawnEnemy, this, this.waveData[i]["enemyType"]);
+                timerDelay += this.delayBetweenPop;
+            }
+        }
+
+        // Check that we're not going to launch a wave that doesn't exist
+        if(this.actualWave + 1 <= Object.keys(this.actualLevelData).length) {
+            this.actualWave ++;
+        } else {
+            this.hideNextLevelText();
+        }
+    },
+
+    update: function () {
+        this.checkTurretFocus();
+
+        if(this.lastWaveLaunched) {
+            if(this.enemies.getFirstAlive() === null) {
+                this.showVictoryScreen();
+            }
+        }
+    },
+
+    showVictoryScreen: function() {
+        var style = { font: "55px Arial", fill: "#ffffff"};
+        this.gameOverUIText = this.add.text(175,
+                                            40,
+                                            "You win !",
+                                            style);
+
+        var style2 = { font: "35px Arial", fill: "#ffffff"};
+        this.gameOverUIText = this.add.text(140,
+                                            120,
+                                            "Press ENTER to restart",
+                                            style2);
+
+        var changeKey = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+        changeKey.onDown.add(function() {
+            this.game.paused = false;
+            this.state.start('Game');
         }, this);
     },
 
@@ -117,10 +228,6 @@ BasicGame.Game.prototype = {
         } else {
             this.path = path;
         }
-    },
-
-    update: function () {
-        this.checkTurretFocus();
     },
 
     checkTurretFocus: function() {
@@ -158,9 +265,9 @@ BasicGame.Game.prototype = {
         }.bind(this));
     },
 
-    spawnEnemy: function() {
+    spawnEnemy: function(key) {
         var enemy = new Enemy(this,
-                              'enemy_01',
+                              key,
                               this.start.x * this.board.TILE_SIZE,
                               this.start.y * this.board.TILE_SIZE,
                               5,
@@ -189,7 +296,6 @@ BasicGame.Game.prototype = {
         this.updateUI();
 
         if(this.life == 0) {
-            console.log("PAUSE")
             this.game.paused = true;
 
             this.showGameOver();
@@ -224,7 +330,6 @@ BasicGame.Game.prototype = {
 
         var changeKey = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
         changeKey.onDown.add(function() {
-            console.log("RETRY");
             this.game.paused = false;
             this.state.start('Game');
         }, this);

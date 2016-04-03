@@ -16,6 +16,7 @@ Board = function (game, level) {
 };
 
 Board.prototype.createLevel = function(first_argument) {
+    var angles = [90, -90, 180];
 	for (var i = 0; i < this.BOARD_HEIGHT; i++) {
         this.board[i] = [];
 
@@ -23,9 +24,14 @@ Board.prototype.createLevel = function(first_argument) {
             // y : x
             switch(this.level[i][j]) {
                 case 0:
-                    this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE,
-                                                       		i * this.TILE_SIZE,
-                                                       		'ground_tile');
+                	var grounds = ['ground_tile', 'ground_tile_empty'];
+                	var ground = grounds[Math.floor(Math.random() * grounds.length)];
+
+                    this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		i * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		ground);
+                    this.board[i][j].anchor.set(0.5, 0.5);
+                    this.board[i][j].angle = angles[Math.floor(Math.random() * angles.length)];
                     this.board[i][j].inputEnabled = true;
                     this.board[i][j].events.onInputDown.add(this.addTower,
                                                             this);
@@ -33,12 +39,108 @@ Board.prototype.createLevel = function(first_argument) {
                 break;
 
                 case 1:
-                    this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE,
-                                                       		i * this.TILE_SIZE,
+                    this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		i * this.TILE_SIZE + (this.TILE_SIZE / 2),
                                                        		'path_tile');
+                    this.board[i][j].anchor.set(0.5, 0.5);
+                    this.board[i][j].angle = angles[Math.floor(Math.random() * angles.length)];
                     this.board[i][j].inputEnabled = true;
                     this.board[i][j].events.onInputDown.add(this.clearSelection,
                                                             this);
+                break;
+
+                case 2:
+                	this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		i * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		'ground_aside');
+                	this.board[i][j].anchor.set(0.5, 0.5);
+                	this.board[i][j].inputEnabled = true;
+                    this.board[i][j].events.onInputDown.add(this.addTower,
+                                                            this);
+                    this.board[i][j].buildable = true;
+                break;
+
+                case 3:
+                	this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		i * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		'ground_aside');
+                	this.board[i][j].anchor.set(0.5, 0.5);
+                    this.board[i][j].angle = 180;
+                	this.board[i][j].inputEnabled = true;
+                    this.board[i][j].events.onInputDown.add(this.addTower,
+                                                           this);
+                    this.board[i][j].buildable = true;
+                break;
+
+                case 4:
+                	this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		i * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		'ground_aside');
+                	this.board[i][j].anchor.set(0.5, 0.5);
+                    this.board[i][j].angle = 90;
+                	this.board[i][j].inputEnabled = true;
+                    this.board[i][j].events.onInputDown.add(this.addTower,
+                                                           this);
+                    this.board[i][j].buildable = true;
+                break;
+
+                case 5:
+                	this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		i * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		'ground_aside');
+                	this.board[i][j].anchor.set(0.5, 0.5);
+                    this.board[i][j].angle = -90;
+                	this.board[i][j].inputEnabled = true;
+                    this.board[i][j].events.onInputDown.add(this.addTower,
+                                                           this);
+                    this.board[i][j].buildable = true;
+                break;
+
+                case 6:
+                	this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		i * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		'ground_corner');
+                	this.board[i][j].anchor.set(0.5, 0.5);
+                	this.board[i][j].inputEnabled = true;
+                    this.board[i][j].events.onInputDown.add(this.addTower,
+                                                           this);
+                    this.board[i][j].buildable = true;
+                break;
+
+                case 7:
+                	this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		i * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		'ground_corner');
+                	this.board[i][j].anchor.set(0.5, 0.5);
+                    this.board[i][j].angle = -90;
+                	this.board[i][j].inputEnabled = true;
+                    this.board[i][j].events.onInputDown.add(this.addTower,
+                                                           this);
+                    this.board[i][j].buildable = true;
+                break;
+
+                case 8:
+                	this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		i * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		'ground_corner');
+                	this.board[i][j].anchor.set(0.5, 0.5);
+                    this.board[i][j].angle = 180;
+                	this.board[i][j].inputEnabled = true;
+                    this.board[i][j].events.onInputDown.add(this.addTower,
+                                                           this);
+                    this.board[i][j].buildable = true;
+                break;
+
+                case 9:
+                	this.board[i][j] = this.game.add.sprite(j * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		i * this.TILE_SIZE + (this.TILE_SIZE / 2),
+                                                       		'ground_corner');
+                	this.board[i][j].anchor.set(0.5, 0.5);
+                    this.board[i][j].angle = 90;
+                	this.board[i][j].inputEnabled = true;
+                    this.board[i][j].events.onInputDown.add(this.addTower,
+                                                            this);
+                    this.board[i][j].buildable = true;
                 break;
             }
         }
@@ -64,7 +166,7 @@ Board.prototype.addTower = function () {
         	var spritePos = this.boardToWorld(mousePos.x, mousePos.y);
 
 	        if(this.game.checkMoney()) {
-        		this.logicalBoard[mousePos.y][mousePos.x] = 2;
+        		this.logicalBoard[mousePos.y][mousePos.x] = 1;
 	            this.game.purchaseTower();
 
 	            // Create tower, need to move this in separate class
@@ -108,9 +210,17 @@ Board.prototype.addTower = function () {
 Board.prototype.isTileEmpty = function(x, y) {
 	this.clearSelection();
 
-	if(this.logicalBoard[y][x] == 0) {
+	if(this.logicalBoard[y][x] === 0 ||
+	   this.logicalBoard[y][x] === 2 ||
+	   this.logicalBoard[y][x] === 3 ||
+	   this.logicalBoard[y][x] === 4 ||
+	   this.logicalBoard[y][x] === 5 ||
+	   this.logicalBoard[y][x] === 6 ||
+	   this.logicalBoard[y][x] === 7 ||
+	   this.logicalBoard[y][x] === 8 ||
+	   this.logicalBoard[y][x] === 9 ) {
 		return true;
-	} else if (this.logicalBoard[y][x] === 2) {
+	} else if (this.logicalBoard[y][x] === 1) {
 		// Select tower for upgrade
 		// TODO
 
